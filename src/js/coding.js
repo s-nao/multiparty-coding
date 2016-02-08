@@ -359,13 +359,13 @@ var markTab = -1;
 function connect(room_name) {
 
     multiparty = new MultiParty({
-        "key": "your_key",
+        "key": "445d9ac2-98bf-4e76-8f56-66d19235e990",
         //"id" : ""+userId,
         "reliable": true,
         "video" : false,
         "audio" : false,
         "debug": 1,
-        "room_name":room_name
+        "room":room_name
     });
 
 	multiparty.on('peer_ms', function(video) {
@@ -611,32 +611,16 @@ function accessRoom(status){
 
 	}else{
 		alert("正しくないアクセスです");
-		return 0;
+		exit;
 	}
 
 	if(input_name == ""){
 		alert("何も入力されていません");
-		return 0;
+		exit;
+	}else if(input_name.length < 4){
+		alert("4文字以上入力してください");
+		exit;
 	}
 
-	alert(input_name);
-
-	var jsonData = {
-        status 	: status_code,
-    	input_name : input_name
-    };
-
-    $.ajax({
-    	type:"POST",
-        url: "/running",
-        data: JSON.stringify(jsonData),
-        contentType: 'application/json', // リクエストの Content-Type
-        dataType: "json",
-
-        success:
-            function(response) {
-            }
-
-
-    });
+	location.href = "/coding/room?i=" + input_name + "&s=" + status_code
 }

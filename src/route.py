@@ -51,24 +51,45 @@ def display_view():
 
     if request.method == "GET":
         language_name = "java"
-        return template(VIEW_DIR + "coding.html", language_name=str(language_name), room_name="")
+        return template(VIEW_DIR + "coding.html",
+                        language_name=str(language_name),
+                        room_name="",
+                        isReadOnly=False)
+
     elif request.method == "POST":
         language_name = request.forms.get("choice_language")
 
-        return template(VIEW_DIR + "coding.html", language_name=str(language_name), room_name="")
+        return template(VIEW_DIR + "coding.html",
+                        language_name=str(language_name),
+                        room_name="",
+                        isReadOnly=False)
 
 
 @route("/coding/room", method=["GET", "POST"])
 def create_room():
     # writer か readerどちらかを判断する
-    action = request.query("action")
+    input_name = request.query.get("i")
+    status = request.query.get("s")
 
-    if action == 0:  # writer
-        pass
-    elif action == 1:  # reader
-        pass
-    else:
-        return 0
+    isReadOnly = False
+
+    print(ROOM_INFO)
+
+    if status == 0:  # writer
+        if input_name in ROOM_INFO.keys():
+            print("同じ部屋が作成されています")
+            return redirect("/coding")
+
+        room = {}
+        ROOM_INFO[input_name] = room
+
+    elif status == 1:  # reader
+        isReadOnly = True
+
+    return template(VIEW_DIR + "coding.html",
+                    language_name="java",
+                    room_name=input_name,
+                    isReadOnly=isReadOnly)
 
 
 @route("/running", method=["POST"])

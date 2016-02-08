@@ -9,8 +9,18 @@
 	<script type="text/javascript">
 		/* bottleからの値を受け取るための場所みたいな */
 		var language_name = "{{language_name}}";
-		var readOnly 	= false; // 読む人だったらtrueにしてください
+		var readOnly 	= "{{isReadOnly}}";
 		var room_name = "{{room_name}}";
+
+		if(readOnly == "False"){
+			readOnly = false;
+		}else{
+			readOnly = true;
+		}
+
+		console.log(language_name);
+		console.log(readOnly);
+		console.log(room_name);
 	</script>
 
 	<!--各種ライブラリのインポート-->
