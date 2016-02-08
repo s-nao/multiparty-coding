@@ -61,7 +61,6 @@ window.onload = function(){
 
 var editor;
 var initSettled	= false;
-var readOnly 	= false; // 読む人だったらtrueにしてください
 var PeerId		= "";
 var filelife	= [];
 var filelength	= 0;
@@ -357,15 +356,16 @@ var multiparty;
 var markId = -1;
 var markTab = -1;
 
-function connect() {
+function connect(room_name) {
 
     multiparty = new MultiParty({
-        "key": "445d9ac2-98bf-4e76-8f56-66d19235e990",
+        "key": "your_key",
         //"id" : ""+userId,
         "reliable": true,
         "video" : false,
         "audio" : false,
-        "debug": 1
+        "debug": 1,
+        "room_name":room_name
     });
 
 	multiparty.on('peer_ms', function(video) {
@@ -487,7 +487,11 @@ function connect() {
 
 }
 
-//connect();
+if(room_name != ""){
+	connect(room_name);
+}else{
+	console.log("solo");
+}
 
 //connectメソッドの下に下記の関数を追加
 
@@ -581,55 +585,6 @@ function setReadable(userId,createId){
     }
 }
 
-//ユーザ一件を追加する
-function addChildMenber(userId, userName,iconName){
-        var menberParent = $('<div id="'+userId+'" class="watch_user"></div>');
-
-        $("div#room_menber_inner").append(menberParent);
-
-        var img = $('<img src="/img/icons/'+iconName+'" width="35" height="35" align="left" hspace="5" alt="">');
-        $("div#"+userId).append(img);
-        $("div#"+userId).append('<div class="watch_user_name">'+userName+'</div>');
-}
-//サーバからユーザのidに対応するユーザ情報を取得する
-function getDataList(){
-
-    multiparty.listAllPeers(function(idLists) {
-        console.log(idLists);
-        for(var i = 0; i < idLists.length;i++){
-            var str = idLists[i]
-            strNum = str.indexOf("_");
-            idLists[i] = str.slice(strNum+1);
-        }
-
-        console.log(idLists)
-
-        $.ajax({
-                type: "POST",
-                url : "http://"+BOTTLE_APP_IP+":8080/getUserList",
-                data: JSON.stringify({usersList:idLists}),
-                dataType:"json",
-                contentType: 'application/json'
-
-        }).success(function(response){
-            console.log("success");
-
-            //一度ユーザリスト内のデータを消去し、二度同じ人が表示されないようにする
-            $("div#room_menber_inner").empty();
-
-            //ユーザを一軒ずつ表示していく
-            for(var i = 0; i < idLists.length; i++){
-                var key = idLists[i]+'';
-                console.log(response[key]);
-                addChildMenber(key,response[key].name,response[key].icon);
-            }
-        }).error(function(response){
-            console.log("faild");
-            console.log(response);
-        });
-    });
-}
-
 
 //書き込みする人
 function tabOnclickDisable() {
@@ -640,4 +595,48 @@ function tabOnclickDisable() {
 		ul.children[i].lastElementChild.setAttribute('onclick','');
         ul.children[i].children[ul.children[i].children.length-2].setAttribute('ondblclick','');
 	}
+}
+
+function accessRoom(status){
+	var status_code = "";
+	var input_name = "";
+
+	if(status == "writer"){
+		status_code = 0;
+		input_name = document.forms.create_room.room_name.value;
+
+	}else if(status == "reader"){
+		status_code = 1;
+		input_name = input_name = document.forms.connect_room.room_name.value;
+
+	}else{
+		alert("正しくないアクセスです");
+		return 0;
+	}
+
+	if(input_name == ""){
+		alert("何も入力されていません");
+		return 0;
+	}
+
+	alert(input_name);
+
+	var jsonData = {
+        status 	: status_code,
+    	input_name : input_name
+    };
+
+    $.ajax({
+    	type:"POST",
+        url: "/running",
+        data: JSON.stringify(jsonData),
+        contentType: 'application/json', // リクエストの Content-Type
+        dataType: "json",
+
+        success:
+            function(response) {
+            }
+
+
+    });
 }

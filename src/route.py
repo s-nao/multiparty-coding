@@ -32,6 +32,10 @@ elif os_name[1] == "WindowsPE":
     import socket
     OWN_IP = socket.gethostbyname(socket.gethostname())
 
+# ----------------initialize variable------------------
+
+ROOM_INFO = {}
+
 #
 # ---------------------URL ROUTING----------------------
 #
@@ -39,12 +43,32 @@ elif os_name[1] == "WindowsPE":
 
 @route("/", method=["GET", "POST"])
 def index():
-    return redirect("/coding/%s" % "java")
+    return redirect("/coding")
 
 
-@route("/coding/<language_name>", method=["GET"])
-def display_view(language_name):
-    return template(VIEW_DIR + "coding.html", language_name=str(language_name))
+@route("/coding", method=["POST", "GET"])
+def display_view():
+
+    if request.method == "GET":
+        language_name = "java"
+        return template(VIEW_DIR + "coding.html", language_name=str(language_name), room_name="")
+    elif request.method == "POST":
+        language_name = request.forms.get("choice_language")
+
+        return template(VIEW_DIR + "coding.html", language_name=str(language_name), room_name="")
+
+
+@route("/coding/room", method=["GET", "POST"])
+def create_room():
+    # writer か readerどちらかを判断する
+    action = request.query("action")
+
+    if action == 0:  # writer
+        pass
+    elif action == 1:  # reader
+        pass
+    else:
+        return 0
 
 
 @route("/running", method=["POST"])

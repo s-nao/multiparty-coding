@@ -2,8 +2,12 @@
 var LANGUAGE_LIST ={
     "":"",
     "java":{"name":"java","compiler":"java7-openjdk","highlight":"java"},
-    "C":{"name":"C","compiler":"gcc-4.3.6","highlight":"c_cpp"},
-    "Python2.7":{"name":"Python2.7","compiler":"python-2.7.3","highlight":"python"},
+    "c_cpp":{"name":"C/C++","compiler":"gcc-4.3.6","highlight":"c_cpp"},
+    "python2_7":{"name":"Python2.7","compiler":"python-2.7.3","highlight":"python"},
+    "python3_3":{"name":"Python3.3","compiler":"python-3.3.2","highlight":"python"},
+    "ruby2":{"name":"Ruby2","compiler":"ruby-2.0.0^p247","highlight":"ruby"},
+    "lisp":{"name":"Lisp","compiler":"clisp-2.49.0","highlight":"lisp"},
+    "sqlite":{"name":"SQLite","compiler":"sqlite-3.8.1","highlight":"sql"},
 };
 
 function language_setting(){
@@ -35,5 +39,21 @@ function language_change(){
     //editor_highlight = LANGUAGE_LIST[language_name]["highlight"];
     
     //editor.getSession().setMode(editor_highlight);
-    location.href='/coding/' + choice_language;
+
+    //フォームオブジェクトを作成
+    var form = document.createElement("form");
+    document.body.appendChild( form );
+
+    //選択されたコンパイラ情報をセット
+    var input = document.createElement("input");
+    input.setAttribute( "type" , "hidden");
+    input.setAttribute( "name" , "choice_language");
+    input.setAttribute( "value" , choice_language);
+
+    //送信先をセット
+    form.appendChild(input);
+    form.setAttribute("action" , "/coding");
+    form.setAttribute( "method", "POST");
+
+    form.submit();
 }
